@@ -34,7 +34,8 @@ add_executable(DunGen main.cpp
         UI.h
         UI.cpp
         Menu.h
-        Menu.cpp)
+        Menu.cpp
+        LevelRoom.cpp)
 
 # set the include directory
 target_include_directories(DunGen PRIVATE ${raylib_INCLUDE_DIRS})

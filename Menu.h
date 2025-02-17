@@ -1,8 +1,11 @@
 ﻿#ifndef MENU_H
 #define MENU_H
 
+#include "ui.h"
 
-void InitializeMenuPanels();
+extern Panel mapPanel;
+extern Panel textPanel;
+
 void DrawAllPanels();
 void DrawMenu();
 
