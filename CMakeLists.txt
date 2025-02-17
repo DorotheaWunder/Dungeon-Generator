@@ -29,7 +29,12 @@ else()
     message(STATUS "Using local ${LIB1}")
 endif()
 
-add_executable(DunGen main.cpp)
+add_executable(DunGen main.cpp
+        LevelRoom.h
+        UI.h
+        UI.cpp
+        Menu.h
+        Menu.cpp)
 
 # set the include directory
 target_include_directories(DunGen PRIVATE ${raylib_INCLUDE_DIRS})

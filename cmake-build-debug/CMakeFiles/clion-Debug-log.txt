@@ -11,6 +11,35 @@
 -- Check for working CXX compiler: C:/Program Files/JetBrains/CLion 2024.3.1.1/bin/mingw/bin/g++.exe - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Configuring done (3.1s)
+-- Getting raylib from Github
+Cloning into 'raylib-src'...
+remote: Enumerating objects: 7473, done.        
+remote: Counting objects: 100% (7473/7473), done.        
+remote: Compressing objects: 100% (4756/4756), done.        
+remote: Total 7473 (delta 4745), reused 4610 (delta 2598), pack-reused 0 (from 0)        
+Receiving objects: 100% (7473/7473), 248.78 MiB | 27.48 MiB/s, done.
+Resolving deltas: 100% (4745/4745), done.
+HEAD is now at c1ab645 Update HISTORY.md
+-- Performing Test COMPILER_HAS_THOSE_TOGGLES
+-- Performing Test COMPILER_HAS_THOSE_TOGGLES - Success
+-- Testing if -Werror=pointer-arith can be used -- compiles
+-- Testing if -Werror=implicit-function-declaration can be used -- compiles
+-- Testing if -fno-strict-aliasing can be used -- compiles
+-- Using raylib's GLFW
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Including Win32 support
+-- Looking for dinput.h
+-- Looking for dinput.h - found
+-- Looking for xinput.h
+-- Looking for xinput.h - found
+-- Audio Backend: miniaudio
+-- Building raylib static library
+-- Generated build type: Debug
+-- Compiling with the flags:
+--   PLATFORM=PLATFORM_DESKTOP
+--   GRAPHICS=GRAPHICS_API_OPENGL_33
+-- Configuring done (25.2s)
 -- Generating done (0.1s)
 -- Build files have been written to: C:/Users/Administratör/CLionProjects/DunGen/cmake-build-debug
