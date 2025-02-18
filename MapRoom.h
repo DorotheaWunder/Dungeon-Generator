@@ -1,13 +1,14 @@
 ﻿#ifndef MAPROOM_H
 #define MAPROOM_H
 
+#include <memory.h>
 #include "levelroom.h"
 
 class MapRoom
 {
 public:
     int x,y;
-    int size;
+    float size;
     RoomType roomType;
     Color roomColor;
     Color outlineColor;

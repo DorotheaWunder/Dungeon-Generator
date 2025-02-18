@@ -1,8 +1,8 @@
 ﻿#ifndef UI_H
 #define UI_H
 
-#define SCREEN_WIDTH 1400
-#define SCREEN_HEIGHT 900
+#define SCREEN_WIDTH 1000
+#define SCREEN_HEIGHT 600
 
 class Panel
 {

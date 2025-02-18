@@ -1,8 +1,11 @@
 ﻿#ifndef DUNGEON_H
 #define DUNGEON_H
 
-constexpr int LEVEL_WIDTH = 20;
-constexpr int LEVEL_HEIGHT = 20;
+#include <memory>
+#include "LevelRoom.h"
+
+constexpr int LEVEL_WIDTH = 10;
+constexpr int LEVEL_HEIGHT = 10;
 
 class Dungeon
 {

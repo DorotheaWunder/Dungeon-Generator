@@ -6,19 +6,19 @@
 
 enum class RoomType
 {
-    NONE,
     NORMAL,
     COMBAT,
     TREASURE,
     ENTRY,
-    EXIT
+    EXIT,
+    NONE
 };
 
 class LevelRoom
 {
 public:
     int x,y;
-    int size;
+    float size;
     RoomType roomType;
     Color roomColor;
     Color outlineColor;
@@ -30,7 +30,7 @@ public:
     int GetX() const { return x; }
     int GetY() const { return y; }
     RoomType GetRoomType() const { return roomType; }
-    Color GetRoomColor() const { return roomColor; }
+    Color SetRoomColor() const;
     Color GetOutlineColor() const { return outlineColor; }
     float GetOutlineWidth() const { return outlineWidth; }
 };
