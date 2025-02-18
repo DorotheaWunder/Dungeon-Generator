@@ -1,20 +1,9 @@
-﻿#ifndef ROOM_H
-#define ROOM_H
-#include <memory>
-#include <stdlib.h>
-#include "raylib.h"
+﻿#ifndef MAPROOM_H
+#define MAPROOM_H
 
-enum class RoomType
-{
-    NONE,
-    NORMAL,
-    COMBAT,
-    TREASURE,
-    ENTRY,
-    EXIT
-};
+#include "levelroom.h"
 
-class LevelRoom
+class MapRoom
 {
 public:
     int x,y;
@@ -23,9 +12,11 @@ public:
     Color roomColor;
     Color outlineColor;
     float outlineWidth;
+    int hasPlayer;
+    int wasVisited;
 
-    LevelRoom();
-    LevelRoom(int posX, int posY);
+    MapRoom();
+    MapRoom(int posX, int posY);
 
     int GetX() const { return x; }
     int GetY() const { return y; }
@@ -33,6 +24,8 @@ public:
     Color GetRoomColor() const { return roomColor; }
     Color GetOutlineColor() const { return outlineColor; }
     float GetOutlineWidth() const { return outlineWidth; }
+    int HasPlayer() const { return hasPlayer; }
+    int WasVisited() const { return wasVisited; }
 };
 
-#endif //ROOM_H
+#endif //MAPROOM_H
