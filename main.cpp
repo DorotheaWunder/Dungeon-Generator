@@ -19,6 +19,7 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
+        dungeon.GenerateLevelLayout();
         dungeon.DrawDungeon();
         DrawMenu();
 

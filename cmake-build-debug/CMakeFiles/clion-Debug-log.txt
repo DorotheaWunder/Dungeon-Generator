@@ -15,9 +15,9 @@
 Cloning into 'raylib-src'...
 remote: Enumerating objects: 7473, done.        
 remote: Counting objects: 100% (7473/7473), done.        
-remote: Compressing objects: 100% (4756/4756), done.        
-remote: Total 7473 (delta 4745), reused 4611 (delta 2598), pack-reused 0 (from 0)        
-Receiving objects: 100% (7473/7473), 248.78 MiB | 24.04 MiB/s, done.
+remote: Compressing objects: 100% (4753/4753), done.        
+remote: Total 7473 (delta 4745), reused 4615 (delta 2601), pack-reused 0 (from 0)        
+Receiving objects: 100% (7473/7473), 248.78 MiB | 18.76 MiB/s, done.
 Resolving deltas: 100% (4745/4745), done.
 HEAD is now at c1ab645 Update HISTORY.md
 -- Performing Test COMPILER_HAS_THOSE_TOGGLES
@@ -40,6 +40,6 @@ HEAD is now at c1ab645 Update HISTORY.md
 -- Compiling with the flags:
 --   PLATFORM=PLATFORM_DESKTOP
 --   GRAPHICS=GRAPHICS_API_OPENGL_33
--- Configuring done (24.8s)
+-- Configuring done (28.2s)
 -- Generating done (0.1s)
 -- Build files have been written to: C:/Users/Administratör/CLionProjects/DunGen/cmake-build-debug
