@@ -6,7 +6,10 @@
 
 enum class RoomType
 {
-    NORMAL,
+    ROOM,
+    WALL,
+    VISITED,
+    FRONTIER,
     COMBAT,
     TREASURE,
     ENTRY,

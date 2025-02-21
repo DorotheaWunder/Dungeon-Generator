@@ -11,11 +11,10 @@
 //------------------------------------------------------ grid generation
 void Dungeon::InitLevelGrid()
 {
-    rooms = std::make_unique<std::unique_ptr<LevelRoom[]>[]>(LEVEL_WIDTH);
+    rooms.resize(LEVEL_WIDTH, std::vector<LevelRoom>(LEVEL_HEIGHT));
 
     for (int i = 0; i < LEVEL_WIDTH; i++)
     {
-        rooms[i] = std::make_unique<LevelRoom[]>(LEVEL_HEIGHT);
         for (int j = 0; j < LEVEL_HEIGHT; j++)
         {
             rooms[i][j] = LevelRoom(i, j);
@@ -25,6 +24,7 @@ void Dungeon::InitLevelGrid()
 }
 
 Dungeon::Dungeon()
+: isGenerating(true), roomCounter(0)
 {
     InitLevelGrid();
 }
@@ -63,7 +63,7 @@ Dungeon::GetNeighborTile(int x, int y)
 
 void Dungeon::MarkAsVisited(int x, int y)
 {
-    rooms[x][y].roomType = RoomType::NORMAL;
+    rooms[x][y].roomType = RoomType::ROOM;
 }
 
 std::pair<int, int> Dungeon::GetRandomNeighbor(std::vector<std::pair<int, int>>& neighbors)
@@ -74,62 +74,66 @@ std::pair<int, int> Dungeon::GetRandomNeighbor(std::vector<std::pair<int, int>>&
     return neighbors[randomIndex];
 }
 
-void Dungeon::PrimAlgorithm()
-{
-    int currentX = rand() % LEVEL_WIDTH;
-    int currentY = rand() % LEVEL_HEIGHT;
 
+void Dungeon::ResetAlgorithm()
+{
+    InitLevelGrid();
+    frontier.clear();
+    isGenerating = true;
+    currentX = rand() % LEVEL_WIDTH;
+    currentY = rand() % LEVEL_HEIGHT;
     MarkAsVisited(currentX, currentY);
-
-    std::vector<std::pair<int, int>> tilesToCheck;
-    tilesToCheck.push_back({currentX, currentY});
-
-    while (!tilesToCheck.empty())
-    {
-        int randIndex = rand() % tilesToCheck.size();
-        std::pair<int, int> currentTile = tilesToCheck[randIndex];
-        tilesToCheck.erase(tilesToCheck.begin() + randIndex);
-
-        int x = currentTile.first;
-        int y = currentTile.second;
-
-        std::vector<std::pair<int, int>> neighbors = GetNeighborTile(x, y);
-
-        for (auto& neighbor : neighbors)
-        {
-            int neighborX = neighbor.first;
-            int neighborY = neighbor.second;
-
-            if (rooms[neighborY][neighborY].roomType == RoomType::NONE)
-            {
-                MarkAsVisited(neighborX, neighborY);
-                tilesToCheck.push_back(neighbor);
-            }
-        }
-
-        std::pair<int, int> nextRoom = GetRandomNeighbor(tilesToCheck);
-        if (nextRoom.first != -1 && nextRoom.second != -1)
-        {
-            currentX = nextRoom.first;
-            currentY = nextRoom.second;
-        }
-    }
+    frontier.push_back({currentX, currentY});
 }
 
 
-
-
-void Dungeon::GenerateLevelLayout()
+void Dungeon::StepPrimAlgorithm()
 {
-    int roomsCreated = 0;
-    int maxRooms = 10;
+    if (!isGenerating || frontier.empty()) return;
 
-    while (roomsCreated < maxRooms)
+    int randIndex = rand() % frontier.size();
+    std::pair<int, int> currentTile = frontier[randIndex];
+    frontier.erase(frontier.begin() + randIndex);
+
+    int x = currentTile.first;
+    int y = currentTile.second;
+
+    if (roomCounter == 0)
     {
-        PrimAlgorithm();
-        roomsCreated++;
+        rooms[x][y].roomType = RoomType::ENTRY;
+    }
+    else
+    {
+        rooms[x][y].roomType = RoomType::ROOM;
+    }
+
+    //MarkAsVisited(x, y);
+    roomCounter++;
+
+    std::vector<std::pair<int, int>> neighbors = GetNeighborTile(x, y);
+
+    for (auto& neighbor : neighbors)
+    {
+        int neighborX = neighbor.first;
+        int neighborY = neighbor.second;
+
+        if (rooms[neighborX][neighborY].roomType == RoomType::NONE)
+        {
+            rooms[neighborX][neighborY].roomType = RoomType::FRONTIER;
+            frontier.push_back(neighbor);
+        }
+
+        if (frontier.empty())
+        {
+            isGenerating = false;
+            rooms[x][y].roomType = RoomType::EXIT;
+        }
     }
 }
 
 
-//do method to check if tile has been visited; also method for random selection
+
+
+
+
+

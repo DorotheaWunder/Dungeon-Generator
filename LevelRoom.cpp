@@ -4,19 +4,25 @@
 #include <stdlib.h>
 
 LevelRoom::LevelRoom()
-    :x(0), y(0), size(60.0f), roomType(RoomType::NORMAL),
+    :x(0), y(0), size(60.0f), roomType(RoomType::ROOM),
 roomColor(GRAY), outlineColor(DARKGRAY), outlineWidth(0.2f) {}
 
 LevelRoom::LevelRoom(int posX, int posY)
-    :x(posX), y(posY), size(60.0f), roomType(RoomType::NORMAL),
+    :x(posX), y(posY), size(60.0f), roomType(RoomType::ROOM),
 roomColor(GRAY), outlineColor(DARKGRAY), outlineWidth(0.2f) {}
 
 Color LevelRoom::SetRoomColor() const
 {
     switch (roomType)
     {
-        case RoomType::NORMAL:
+        case RoomType::ROOM:
             return GRAY;
+        case RoomType::WALL:
+            return DARKGRAY;
+        case RoomType::VISITED:
+            return WHITE;
+        case RoomType::FRONTIER:
+            return SKYBLUE;
         case RoomType::COMBAT:
             return RED;
         case RoomType::TREASURE:

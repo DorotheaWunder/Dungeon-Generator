@@ -19,9 +19,14 @@ int main()
         BeginDrawing();
         ClearBackground(BLACK);
 
-        dungeon.GenerateLevelLayout();
+        if (IsKeyPressed(KEY_SPACE))
+        {
+            dungeon.ResetAlgorithm();
+        }
+
+        dungeon.StepPrimAlgorithm();
         dungeon.DrawDungeon();
-        DrawMenu();
+        //DrawMenu();
 
         EndDrawing();
     }
