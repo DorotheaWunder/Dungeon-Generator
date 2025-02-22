@@ -2,6 +2,7 @@
 #define ROOM_H
 #include <memory>
 #include <stdlib.h>
+#include <vector>
 #include "raylib.h"
 
 enum class RoomType
@@ -12,9 +13,16 @@ enum class RoomType
     FRONTIER,
     COMBAT,
     TREASURE,
+    TRAP,
     ENTRY,
     EXIT,
     NONE
+};
+
+struct RoomProbability
+{
+    RoomType type;
+    float probability;
 };
 
 class LevelRoom
@@ -32,10 +40,12 @@ public:
 
     int GetX() const { return x; }
     int GetY() const { return y; }
-    RoomType GetRoomType() const { return roomType; }
-    Color SetRoomColor() const;
     Color GetOutlineColor() const { return outlineColor; }
     float GetOutlineWidth() const { return outlineWidth; }
+    RoomType GetRoomType() const { return roomType; }
+    Color SetRoomColor() const;
+    std::vector<RoomProbability> roomProbabilities;
+    void InitRoomProbabilities();
 };
 
 #endif //ROOM_H

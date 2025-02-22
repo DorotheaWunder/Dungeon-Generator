@@ -14,7 +14,6 @@ public:
     Dungeon();
     void InitLevelGrid();
     void DrawDungeon();
-    void GenerateLevelLayout();
     void StepPrimAlgorithm();
     void ResetAlgorithm();
 
@@ -29,6 +28,11 @@ private:
     std::vector<std::pair<int, int>>GetNeighborTile(int x, int y);
     void MarkAsVisited(int x, int y);
     std::pair<int, int> GetRandomNeighbor(std::vector<std::pair<int, int>>& neighbors);
+    bool IsValidCell(int x, int y) const;
+    void SetRoomType(int x, int y);
+    void ProcessNeighbors(int x, int y);
+    void FillWalls(int x, int y);
+    void PlaceExit();
 };
 
 #endif //DUNGEON_H

@@ -46,18 +46,44 @@ void Dungeon::DrawDungeon()
     }
 }
 
-//------------------------------------------------------ room/level generation
+//------------------------------------------------------ helper functions
 
 std::vector<std::pair<int, int>>
 Dungeon::GetNeighborTile(int x, int y)
 {
     std::vector<std::pair<int, int>> neighbors;
 
-    if (x > 0) neighbors.push_back({x - 1, y});
-    if (x < LEVEL_WIDTH - 1) neighbors.push_back({x + 1, y});
-    if (y > 0) neighbors.push_back({x, y - 1});
-    if (y < LEVEL_HEIGHT - 1) neighbors.push_back({x, y + 1});
+    if (x > 1)
+    {
+        if (rooms[x-2][y].roomType == RoomType::NONE)
+        {
+            neighbors.push_back({x - 2, y});
+        }
+    }
 
+    if (x < LEVEL_WIDTH - 2)
+    {
+        if (rooms[x+2][y].roomType == RoomType::NONE)
+        {
+            neighbors.push_back({x + 2, y});
+        }
+    }
+
+    if (y > 1)
+    {
+        if (rooms[x][y-2].roomType == RoomType::NONE)
+        {
+            neighbors.push_back({x, y - 2});
+        }
+    }
+
+    if (y < LEVEL_HEIGHT - 2)
+    {
+        if (rooms[x][y+2].roomType == RoomType::NONE)
+        {
+            neighbors.push_back({x, y + 2});
+        }
+    }
     return neighbors;
 }
 
@@ -74,30 +100,13 @@ std::pair<int, int> Dungeon::GetRandomNeighbor(std::vector<std::pair<int, int>>&
     return neighbors[randomIndex];
 }
 
-
-void Dungeon::ResetAlgorithm()
+bool Dungeon::IsValidCell(int x, int y) const
 {
-    InitLevelGrid();
-    frontier.clear();
-    isGenerating = true;
-    currentX = rand() % LEVEL_WIDTH;
-    currentY = rand() % LEVEL_HEIGHT;
-    MarkAsVisited(currentX, currentY);
-    frontier.push_back({currentX, currentY});
+    return x >= 0 && x < LEVEL_WIDTH && y >= 0 && y < LEVEL_HEIGHT;
 }
 
-
-void Dungeon::StepPrimAlgorithm()
+void Dungeon::SetRoomType(int x, int y) //add other room types
 {
-    if (!isGenerating || frontier.empty()) return;
-
-    int randIndex = rand() % frontier.size();
-    std::pair<int, int> currentTile = frontier[randIndex];
-    frontier.erase(frontier.begin() + randIndex);
-
-    int x = currentTile.first;
-    int y = currentTile.second;
-
     if (roomCounter == 0)
     {
         rooms[x][y].roomType = RoomType::ENTRY;
@@ -106,11 +115,12 @@ void Dungeon::StepPrimAlgorithm()
     {
         rooms[x][y].roomType = RoomType::ROOM;
     }
-
-    //MarkAsVisited(x, y);
     roomCounter++;
+}
 
-    std::vector<std::pair<int, int>> neighbors = GetNeighborTile(x, y);
+void Dungeon::ProcessNeighbors(int x, int y)
+{
+    auto neighbors = GetNeighborTile(x, y);
 
     for (auto& neighbor : neighbors)
     {
@@ -121,19 +131,84 @@ void Dungeon::StepPrimAlgorithm()
         {
             rooms[neighborX][neighborY].roomType = RoomType::FRONTIER;
             frontier.push_back(neighbor);
-        }
 
-        if (frontier.empty())
-        {
-            isGenerating = false;
-            rooms[x][y].roomType = RoomType::EXIT;
+            int wallX = (x + neighborX) / 2;
+            int wallY = (y + neighborY) / 2;
+            rooms[wallX][wallY].roomType = RoomType::ROOM;
         }
     }
 }
 
+void Dungeon::FillWalls(int x, int y)
+{
+    for (int dx = -1; dx <= 1; dx++)
+    {
+        for (int dy = -1; dy <= 1; dy++)
+        {
+            int newX = x + dx;
+            int newY = y + dy;
 
+            if (IsValidCell(newX, newY) &&
+                rooms[newX][newY].roomType == RoomType::NONE)
+            {
+                rooms[newX][newY].roomType = RoomType::WALL;
+            }
+        }
+    }
+}
 
+void Dungeon::PlaceExit()
+{
+    bool exitPlaced = false;
+    for (int i = LEVEL_WIDTH-1; i >= 0 && !exitPlaced; i--)
+    {
+        for (int j = LEVEL_HEIGHT-1; j >= 0 && !exitPlaced; j--)
+        {
+            if (rooms[i][j].roomType == RoomType::ROOM)
+            {
+                rooms[i][j].roomType = RoomType::EXIT;
+                exitPlaced = true;
+                return;
+            }
+        }
+    }
+}
 
+//------------------------------------------------------ room/level generation
+void Dungeon::StepPrimAlgorithm()
+{
+    if (!isGenerating || frontier.empty())
+    {
+        if (frontier.empty())
+        {
+            isGenerating = false;
+            PlaceExit();
+        }
+        return;
+    }
 
+    int randIndex = rand() % frontier.size();
+    std::pair<int, int> currentTile = frontier[randIndex];
+    frontier.erase(frontier.begin() + randIndex);
 
+    int x = currentTile.first;
+    int y = currentTile.second;
 
+    SetRoomType(x, y);
+
+    ProcessNeighbors(x, y);
+
+    FillWalls(x, y);
+}
+
+void Dungeon::ResetAlgorithm()
+{
+    InitLevelGrid();
+    frontier.clear();
+    isGenerating = true;
+    roomCounter = 0;
+    currentX = (rand() % (LEVEL_WIDTH/2)) * 2;
+    currentY = (rand() % (LEVEL_HEIGHT/2)) * 2;
+    MarkAsVisited(currentX, currentY);
+    frontier.push_back({currentX, currentY});
+}
