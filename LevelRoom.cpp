@@ -5,12 +5,12 @@
 #include <vector>
 
 LevelRoom::LevelRoom()
-    :x(0), y(0), size(60.0f), roomType(RoomType::ROOM),
-roomColor(GRAY), outlineColor(DARKGRAY), outlineWidth(0.2f) {}
+    :x(0), y(0), size(10.0f), roomType(RoomType::ROOM),
+roomColor(GRAY), outlineColor(BLACK), outlineWidth(0.1f) {}
 
 LevelRoom::LevelRoom(int posX, int posY)
-    :x(posX), y(posY), size(60.0f), roomType(RoomType::ROOM),
-roomColor(GRAY), outlineColor(DARKGRAY), outlineWidth(0.2f) {}
+    :x(posX), y(posY), size(10.0f), roomType(RoomType::ROOM),
+roomColor(GRAY), outlineColor(BLACK), outlineWidth(0.1f) {}
 
 Color LevelRoom::SetRoomColor() const
 {
@@ -19,7 +19,7 @@ Color LevelRoom::SetRoomColor() const
         case RoomType::ROOM:
             return GRAY;
         case RoomType::WALL:
-            return DARKGRAY;
+            return BLACK;
         case RoomType::VISITED:
             return WHITE;
         case RoomType::FRONTIER:

@@ -5,8 +5,8 @@
 #include <vector>
 #include "LevelRoom.h"
 
-constexpr int LEVEL_WIDTH = 10;
-constexpr int LEVEL_HEIGHT = 10;
+constexpr int LEVEL_WIDTH = 60;
+constexpr int LEVEL_HEIGHT = 60;
 
 class Dungeon
 {

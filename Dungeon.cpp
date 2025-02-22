@@ -41,7 +41,7 @@ void Dungeon::DrawDungeon()
             Rectangle roomRectangle = { i * roomSize, j * roomSize, roomSize, roomSize };
 
             DrawRectangleRec(roomRectangle, roomColor);
-            DrawRectangleLinesEx(roomRectangle, 2.0f, DARKGRAY);
+            DrawRectangleLinesEx(roomRectangle, 0.5f, BLACK);
         }
     }
 }
@@ -160,12 +160,15 @@ void Dungeon::FillWalls(int x, int y)
 void Dungeon::PlaceExit()
 {
     bool exitPlaced = false;
+    std::cout << "Placing exit...\n";
+
     for (int i = LEVEL_WIDTH-1; i >= 0 && !exitPlaced; i--)
     {
         for (int j = LEVEL_HEIGHT-1; j >= 0 && !exitPlaced; j--)
         {
             if (rooms[i][j].roomType == RoomType::ROOM)
             {
+                std::cout << "Exit placed at: " << i << ", " << j << std::endl;
                 rooms[i][j].roomType = RoomType::EXIT;
                 exitPlaced = true;
                 return;
@@ -179,7 +182,7 @@ void Dungeon::StepPrimAlgorithm()
 {
     if (!isGenerating || frontier.empty())
     {
-        if (frontier.empty())
+        if (frontier.empty() && isGenerating)
         {
             isGenerating = false;
             PlaceExit();
