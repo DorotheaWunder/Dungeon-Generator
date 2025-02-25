@@ -30,12 +30,12 @@ else()
 endif()
 
 add_executable(DunGen main.cpp
-        LevelRoom.h
+        LevelTile.h
         UI.h
         UI.cpp
         Menu.h
         Menu.cpp
-        LevelRoom.cpp
+        LevelTile.cpp
         Dungeon.h
         Dungeon.cpp
         MapRoom.h

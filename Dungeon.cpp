@@ -1,4 +1,4 @@
-﻿#include "LevelRoom.h"
+﻿#include "LevelTile.h"
 #include "Dungeon.h"
 #include "raylib.h"
 #include <cstdlib>
@@ -6,19 +6,20 @@
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
+#include <cmath>
 
 
 //------------------------------------------------------ grid generation
 void Dungeon::InitLevelGrid()
 {
-    rooms.resize(LEVEL_WIDTH, std::vector<LevelRoom>(LEVEL_HEIGHT));
+    rooms.resize(LEVEL_WIDTH, std::vector<LevelTile>(LEVEL_HEIGHT));
 
     for (int i = 0; i < LEVEL_WIDTH; i++)
     {
         for (int j = 0; j < LEVEL_HEIGHT; j++)
         {
-            rooms[i][j] = LevelRoom(i, j);
-            rooms[i][j].roomType = RoomType::NONE;
+            rooms[i][j] = LevelTile(i, j);
+            rooms[i][j].roomType = TileType::NONE;
         }
     }
 }
@@ -35,8 +36,8 @@ void Dungeon::DrawDungeon()
     {
         for (int j = 0; j < LEVEL_HEIGHT; j++)
         {
-            LevelRoom& room = rooms[i][j];
-            Color roomColor = room.SetRoomColor();
+            LevelTile& room = rooms[i][j];
+            Color roomColor = room.SetTileColor();
             float roomSize = room.size;
             Rectangle roomRectangle = { i * roomSize, j * roomSize, roomSize, roomSize };
 
@@ -52,36 +53,42 @@ std::vector<std::pair<int, int>>
 Dungeon::GetNeighborTile(int x, int y)
 {
     std::vector<std::pair<int, int>> neighbors;
+    int minDistance = 2;
+    int maxDistance = 2;
 
-    if (x > 1)
+    int stepX = minDistance + (rand() % (maxDistance - minDistance + 1));
+    int stepY = minDistance + (rand() % (maxDistance - minDistance + 1));
+
+
+    if (x > stepX)
     {
-        if (rooms[x-2][y].roomType == RoomType::NONE)
+        if (rooms[x-stepX][y].roomType == TileType::NONE)
         {
-            neighbors.push_back({x - 2, y});
+            neighbors.push_back({x - stepX, y});
         }
     }
 
-    if (x < LEVEL_WIDTH - 2)
+    if (x < LEVEL_WIDTH - stepX - 1)
     {
-        if (rooms[x+2][y].roomType == RoomType::NONE)
+        if (rooms[x+stepX][y].roomType == TileType::NONE)
         {
-            neighbors.push_back({x + 2, y});
+            neighbors.push_back({x + stepX, y});
         }
     }
 
-    if (y > 1)
+    if (y > stepY)
     {
-        if (rooms[x][y-2].roomType == RoomType::NONE)
+        if (rooms[x][y-stepY].roomType == TileType::NONE)
         {
-            neighbors.push_back({x, y - 2});
+            neighbors.push_back({x, y - stepY});
         }
     }
 
-    if (y < LEVEL_HEIGHT - 2)
+    if (y < LEVEL_HEIGHT - stepY - 1)
     {
-        if (rooms[x][y+2].roomType == RoomType::NONE)
+        if (rooms[x][y+stepY].roomType == TileType::NONE)
         {
-            neighbors.push_back({x, y + 2});
+            neighbors.push_back({x, y + stepY});
         }
     }
     return neighbors;
@@ -89,7 +96,7 @@ Dungeon::GetNeighborTile(int x, int y)
 
 void Dungeon::MarkAsVisited(int x, int y)
 {
-    rooms[x][y].roomType = RoomType::ROOM;
+    rooms[x][y].roomType = TileType::ROOM;
 }
 
 std::pair<int, int> Dungeon::GetRandomNeighbor(std::vector<std::pair<int, int>>& neighbors)
@@ -105,15 +112,47 @@ bool Dungeon::IsValidCell(int x, int y) const
     return x >= 0 && x < LEVEL_WIDTH && y >= 0 && y < LEVEL_HEIGHT;
 }
 
-void Dungeon::SetRoomType(int x, int y) //add other room types
+
+TileType Dungeon::DistributeRoomTypes()
+{
+    static std::vector<TileProbability> roomProbabilities;
+
+    if (roomProbabilities.empty())
+    {
+        roomProbabilities =
+            {
+                {TileType::COMBAT, 0.30f},
+                {TileType::TREASURE, 0.10f},
+                {TileType::TRAP, 0.20f},
+                {TileType::ROOM, 0.40f},
+            };
+    }
+
+    float roll = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    float cumulativeProbability = 0.0f;
+
+    for (const auto& prob : roomProbabilities)
+    {
+        cumulativeProbability += prob.probability;
+        if (roll <= cumulativeProbability)
+        {
+            return prob.type;
+        }
+    }
+
+    return TileType::ROOM;
+}
+
+void Dungeon::SetRoomType(int x, int y) //add other room types -> switch statement?? with set exit method? combine??
 {
     if (roomCounter == 0)
     {
-        rooms[x][y].roomType = RoomType::ENTRY;
+        rooms[x][y].roomType = TileType::ENTRY;
     }
     else
     {
-        rooms[x][y].roomType = RoomType::ROOM;
+        //call distribute room types method
+        rooms[x][y].roomType = TileType::ROOM;
     }
     roomCounter++;
 }
@@ -127,14 +166,14 @@ void Dungeon::ProcessNeighbors(int x, int y)
         int neighborX = neighbor.first;
         int neighborY = neighbor.second;
 
-        if (rooms[neighborX][neighborY].roomType == RoomType::NONE)
+        if (rooms[neighborX][neighborY].roomType == TileType::NONE)
         {
-            rooms[neighborX][neighborY].roomType = RoomType::FRONTIER;
+            rooms[neighborX][neighborY].roomType = TileType::FRONTIER;
             frontier.push_back(neighbor);
 
             int wallX = (x + neighborX) / 2;
             int wallY = (y + neighborY) / 2;
-            rooms[wallX][wallY].roomType = RoomType::ROOM;
+            rooms[wallX][wallY].roomType = TileType::ROOM;
         }
     }
 }
@@ -149,9 +188,9 @@ void Dungeon::FillWalls(int x, int y)
             int newY = y + dy;
 
             if (IsValidCell(newX, newY) &&
-                rooms[newX][newY].roomType == RoomType::NONE)
+                rooms[newX][newY].roomType == TileType::NONE)
             {
-                rooms[newX][newY].roomType = RoomType::WALL;
+                rooms[newX][newY].roomType = TileType::WALL;
             }
         }
     }
@@ -159,25 +198,33 @@ void Dungeon::FillWalls(int x, int y)
 
 void Dungeon::PlaceExit()
 {
+    std::vector<std::pair<int, int>> roomTiles;
     bool exitPlaced = false;
-    std::cout << "Placing exit...\n";
 
-    for (int i = LEVEL_WIDTH-1; i >= 0 && !exitPlaced; i--)
+    for (int i = 0; i < LEVEL_WIDTH && !exitPlaced; i++)
     {
-        for (int j = LEVEL_HEIGHT-1; j >= 0 && !exitPlaced; j--)
+        for (int j = 0; j < LEVEL_HEIGHT && !exitPlaced; j++)
         {
-            if (rooms[i][j].roomType == RoomType::ROOM)
+            if (rooms[i][j].roomType == TileType::ROOM)
             {
-                std::cout << "Exit placed at: " << i << ", " << j << std::endl;
-                rooms[i][j].roomType = RoomType::EXIT;
-                exitPlaced = true;
-                return;
+                roomTiles.push_back({i, j});
+                // rooms[i][j].roomType = RoomType::EXIT;
+                // exitPlaced = true;
+                // return;
             }
         }
     }
+
+    if (!roomTiles.empty())
+    {
+        int randIndex = rand() % roomTiles.size();
+        auto [exitX, exitY] = roomTiles[randIndex];
+
+        rooms[exitX][exitY].roomType = TileType::EXIT;
+    }
 }
 
-//------------------------------------------------------ room/level generation
+//------------------------------------------------------ corridor generation
 void Dungeon::StepPrimAlgorithm()
 {
     if (!isGenerating || frontier.empty())
@@ -214,4 +261,116 @@ void Dungeon::ResetAlgorithm()
     currentY = (rand() % (LEVEL_HEIGHT/2)) * 2;
     MarkAsVisited(currentX, currentY);
     frontier.push_back({currentX, currentY});
+}
+
+
+//------------------------------------------------------ poisson
+
+Anchor::Anchor(int x, int y) : x(x), y(y) {}
+
+
+int CalculateSquareDistance(const Anchor& a1, const Anchor& a2)
+{
+    return std::pow(a2.x - a1.x, 2) + std::pow(a2.y - a1.y, 2);
+}
+
+bool Dungeon::HasEnoughSpace(int x, int y, int minDistance, int maxDistance)
+{
+    for (const auto& anchor : anchors)
+    {
+        int distanceSqr = CalculateSquareDistance({x, y}, anchor);
+
+        if (distanceSqr < minDistance * minDistance)
+        {
+            return false;
+        }
+        if (distanceSqr > maxDistance * maxDistance)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void Dungeon::RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance)
+{
+    int maxAttempts = 30;
+
+    for (int i = 0; i < numAnchors; i++)
+    {
+        int anchorX, anchorY;
+        bool validPlacement = false;
+        int attempts = 0;
+
+        while (!validPlacement && attempts < maxAttempts)
+        {
+            attempts++;
+            anchorX = rand() % LEVEL_WIDTH;
+            anchorY = rand() % LEVEL_HEIGHT;
+        }
+
+        // if (rooms[anchorX][anchorY].roomType == TileType::ROOM &&
+        //     HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
+            if (HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
+        {
+            validPlacement = true;
+            rooms[anchorX][anchorY].roomType = TileType::ANCHOR;
+            anchors.push_back(Anchor(anchorX,anchorY));
+        }
+
+        if (attempts >= maxAttempts) {break; }
+    }
+}
+
+void Dungeon::CreateOutlineTiles(int anchorX, int anchorY)
+{
+    int roomWidth = 3 + rand() % 2;
+    int roomHeight = 3 + rand() % 2;
+
+    int startX = std::max(0, anchorX - roomWidth/ 2);
+    int endX = std::min(LEVEL_WIDTH - 1, startX + roomWidth);
+    int startY = std::max(0, anchorY - roomWidth/ 2);
+    int endY = std::min(LEVEL_HEIGHT - 1, startY + roomHeight);
+
+    TileType roomType = DistributeRoomTypes();
+
+    for (int x =  startX; x <= endX; x++)
+    {
+        for (int y = startY; y <= endY; y++)
+        {
+            if (rooms[x][y].roomType != TileType::ROOM &&
+                rooms[x][y].roomType != TileType::ENTRY &&
+                rooms[x][y].roomType != TileType::EXIT)
+            {
+                rooms[x][y].roomType = roomType;
+            }
+        }
+    }
+}
+
+void Dungeon::CreateRooms()
+{
+    for (const auto& anchor : anchors)
+    {
+        CreateOutlineTiles(anchor.x, anchor.y);
+    }
+}
+
+//------------------------------------------------------ Complete DUNGEON
+
+void Dungeon::GenerateDungeon()
+{
+    ResetAlgorithm();
+
+    while (isGenerating)
+    {
+        StepPrimAlgorithm();
+    }
+
+    const int numAnchors = 15;
+    const int minDistance = 5;
+    const int maxDistance = 15;
+
+    RandomAnchorPoint(numAnchors, minDistance, maxDistance);
+    CreateRooms();
 }

@@ -5,12 +5,12 @@
 #include <vector>
 #include "raylib.h"
 
-enum class RoomType
+enum class TileType
 {
     ROOM,
     WALL,
-    VISITED,
     FRONTIER,
+    ANCHOR,
     COMBAT,
     TREASURE,
     TRAP,
@@ -19,32 +19,32 @@ enum class RoomType
     NONE
 };
 
-struct RoomProbability
+struct TileProbability
 {
-    RoomType type;
+    TileType type;
     float probability;
 };
 
-class LevelRoom
+class LevelTile
 {
 public:
     int x,y;
     float size;
-    RoomType roomType;
+    TileType roomType;
     Color roomColor;
     Color outlineColor;
     float outlineWidth;
 
-    LevelRoom();
-    LevelRoom(int posX, int posY);
+    LevelTile();
+    LevelTile(int posX, int posY);
 
     int GetX() const { return x; }
     int GetY() const { return y; }
     Color GetOutlineColor() const { return outlineColor; }
     float GetOutlineWidth() const { return outlineWidth; }
-    RoomType GetRoomType() const { return roomType; }
-    Color SetRoomColor() const;
-    std::vector<RoomProbability> roomProbabilities;
+    TileType GetRoomType() const { return roomType; }
+    Color SetTileColor() const;
+    std::vector<TileProbability> roomProbabilities;
     void InitRoomProbabilities();
 };
 

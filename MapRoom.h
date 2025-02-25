@@ -2,14 +2,14 @@
 #define MAPROOM_H
 
 #include <memory.h>
-#include "levelroom.h"
+#include "LevelTile.h"
 
 class MapRoom
 {
 public:
     int x,y;
     float size;
-    RoomType roomType;
+    TileType roomType;
     Color roomColor;
     Color outlineColor;
     float outlineWidth;
@@ -21,7 +21,7 @@ public:
 
     int GetX() const { return x; }
     int GetY() const { return y; }
-    RoomType GetRoomType() const { return roomType; }
+    TileType GetRoomType() const { return roomType; }
     Color GetRoomColor() const { return roomColor; }
     Color GetOutlineColor() const { return outlineColor; }
     float GetOutlineWidth() const { return outlineWidth; }

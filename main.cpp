@@ -8,7 +8,7 @@
 
 int main()
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Inventory UI");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DunGen");
     Dungeon dungeon;
 
     SetTargetFPS(60);
@@ -21,12 +21,14 @@ int main()
 
         if (IsKeyPressed(KEY_SPACE))
         {
-            dungeon.ResetAlgorithm();
+            dungeon.GenerateDungeon();
+            //dungeon.ResetAlgorithm();
         }
 
         dungeon.StepPrimAlgorithm();
         dungeon.DrawDungeon();
-        //DrawMenu();
+
+
 
         EndDrawing();
     }
