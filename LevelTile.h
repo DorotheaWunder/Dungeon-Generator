@@ -9,6 +9,7 @@ enum class TileType
 {
     ROOM,
     WALL,
+    CORRIDOR,
     FRONTIER,
     ANCHOR,
     COMBAT,

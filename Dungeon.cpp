@@ -48,7 +48,6 @@ void Dungeon::DrawDungeon()
 }
 
 //------------------------------------------------------ helper functions
-
 std::vector<std::pair<int, int>>
 Dungeon::GetNeighborTile(int x, int y)
 {
@@ -96,7 +95,7 @@ Dungeon::GetNeighborTile(int x, int y)
 
 void Dungeon::MarkAsVisited(int x, int y)
 {
-    rooms[x][y].roomType = TileType::ROOM;
+    rooms[x][y].roomType = TileType::CORRIDOR;
 }
 
 std::pair<int, int> Dungeon::GetRandomNeighbor(std::vector<std::pair<int, int>>& neighbors)
@@ -112,7 +111,6 @@ bool Dungeon::IsValidCell(int x, int y) const
     return x >= 0 && x < LEVEL_WIDTH && y >= 0 && y < LEVEL_HEIGHT;
 }
 
-
 TileType Dungeon::DistributeRoomTypes()
 {
     static std::vector<TileProbability> roomProbabilities;
@@ -121,10 +119,10 @@ TileType Dungeon::DistributeRoomTypes()
     {
         roomProbabilities =
             {
-                {TileType::COMBAT, 0.30f},
-                {TileType::TREASURE, 0.10f},
-                {TileType::TRAP, 0.20f},
-                {TileType::ROOM, 0.40f},
+                {TileType::COMBAT, 0.40f},
+                {TileType::TREASURE, 0.20f},
+                {TileType::TRAP, 0.30f},
+                {TileType::ROOM, 0.60f},
             };
     }
 
@@ -265,7 +263,6 @@ void Dungeon::ResetAlgorithm()
 
 
 //------------------------------------------------------ poisson
-
 Anchor::Anchor(int x, int y) : x(x), y(y) {}
 
 
@@ -309,9 +306,9 @@ void Dungeon::RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance
             anchorY = rand() % LEVEL_HEIGHT;
         }
 
-        // if (rooms[anchorX][anchorY].roomType == TileType::ROOM &&
-        //     HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
-            if (HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
+        if (rooms[anchorX][anchorY].roomType == TileType::ROOM &&
+            HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
+            //if (HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
         {
             validPlacement = true;
             rooms[anchorX][anchorY].roomType = TileType::ANCHOR;
@@ -324,8 +321,8 @@ void Dungeon::RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance
 
 void Dungeon::CreateOutlineTiles(int anchorX, int anchorY)
 {
-    int roomWidth = 3 + rand() % 2;
-    int roomHeight = 3 + rand() % 2;
+    int roomWidth = 2 + rand() % 4;
+    int roomHeight = 2 + rand() % 4;
 
     int startX = std::max(0, anchorX - roomWidth/ 2);
     int endX = std::min(LEVEL_WIDTH - 1, startX + roomWidth);
@@ -338,8 +335,7 @@ void Dungeon::CreateOutlineTiles(int anchorX, int anchorY)
     {
         for (int y = startY; y <= endY; y++)
         {
-            if (rooms[x][y].roomType != TileType::ROOM &&
-                rooms[x][y].roomType != TileType::ENTRY &&
+            if (rooms[x][y].roomType != TileType::ENTRY &&
                 rooms[x][y].roomType != TileType::EXIT)
             {
                 rooms[x][y].roomType = roomType;
