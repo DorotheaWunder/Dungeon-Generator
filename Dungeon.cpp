@@ -265,7 +265,6 @@ void Dungeon::ResetAlgorithm()
 //------------------------------------------------------ poisson
 Anchor::Anchor(int x, int y) : x(x), y(y) {}
 
-
 int CalculateSquareDistance(const Anchor& a1, const Anchor& a2)
 {
     return std::pow(a2.x - a1.x, 2) + std::pow(a2.y - a1.y, 2);
@@ -291,7 +290,7 @@ bool Dungeon::HasEnoughSpace(int x, int y, int minDistance, int maxDistance)
 
 void Dungeon::RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance)
 {
-    int maxAttempts = 30;
+    int maxAttempts = 500;
 
     for (int i = 0; i < numAnchors; i++)
     {
@@ -304,18 +303,22 @@ void Dungeon::RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance
             attempts++;
             anchorX = rand() % LEVEL_WIDTH;
             anchorY = rand() % LEVEL_HEIGHT;
+
+            if (HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
+            {
+                validPlacement = true;
+            }
         }
 
-        if (rooms[anchorX][anchorY].roomType == TileType::ROOM &&
-            HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
-            //if (HasEnoughSpace(anchorX, anchorY, minDistance, maxDistance))
+        if (validPlacement)
         {
-            validPlacement = true;
             rooms[anchorX][anchorY].roomType = TileType::ANCHOR;
             anchors.push_back(Anchor(anchorX,anchorY));
         }
-
-        if (attempts >= maxAttempts) {break; }
+        else
+        {
+            break;
+        }
     }
 }
 
@@ -363,9 +366,9 @@ void Dungeon::GenerateDungeon()
         StepPrimAlgorithm();
     }
 
-    const int numAnchors = 15;
+    const int numAnchors = 10;
     const int minDistance = 5;
-    const int maxDistance = 15;
+    const int maxDistance = 30;
 
     RandomAnchorPoint(numAnchors, minDistance, maxDistance);
     CreateRooms();
