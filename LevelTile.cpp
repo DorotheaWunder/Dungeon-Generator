@@ -33,7 +33,7 @@ Color LevelTile::SetTileColor() const
         case TileType::TRAP:
             return (Color){ 121, 85, 54, 255 };
         case TileType::ENTRY:
-            return WHITE;
+            return GRAY;
         case TileType::EXIT:
             return WHITE;
         case TileType::NONE:

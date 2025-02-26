@@ -5,6 +5,9 @@
 #include <vector>
 #include "LevelTile.h"
 
+
+class Player;
+
 constexpr int LEVEL_WIDTH = 30;
 constexpr int LEVEL_HEIGHT = 30;
 
@@ -13,7 +16,7 @@ struct Anchor
     int x;
     int y;
 
-    Anchor(int x = 0, int y = 0);
+    Anchor(int x = 0, int y = 0) : x{x}, y{y} { }
 };
 
 int CalculateSquareDistance(const Anchor& a1, const Anchor& a2);
@@ -27,12 +30,14 @@ public:
     void StepPrimAlgorithm();
     void ResetAlgorithm();
 
-    void RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance);
+    bool IsValidCell(int x, int y) const;
+    std::vector<std::vector<LevelTile>> rooms;
+
     void GenerateDungeon();
+    void SpawnPlayer(Player& player);
 
 
 private:
-    std::vector<std::vector<LevelTile>> rooms;
     std::vector<std::pair<int, int>> frontier;
     int currentX, currentY;
     int roomCounter;
@@ -42,7 +47,7 @@ private:
     std::vector<std::pair<int, int>>GetNeighborTile(int x, int y);
     void MarkAsVisited(int x, int y);
     std::pair<int, int> GetRandomNeighbor(std::vector<std::pair<int, int>>& neighbors);
-    bool IsValidCell(int x, int y) const;
+
     TileType DistributeRoomTypes();
     void SetRoomType(int x, int y);
     void ProcessNeighbors(int x, int y);
@@ -51,11 +56,8 @@ private:
 
     std::vector<Anchor> anchors;
     bool HasEnoughSpace(int x, int y, int minDistance, int maxDistance);
-    //void RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance);
+    void RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance);
     void CreateOutlineTiles(int anchorX, int anchorY);
     void CreateRooms();
-
-
-    //void GenerateDungeon();
 };
 #endif //DUNGEON_H

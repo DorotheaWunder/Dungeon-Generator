@@ -13,12 +13,12 @@
 -- Detecting CXX compile features - done
 -- Getting raylib from Github
 Cloning into 'raylib-src'...
-remote: Enumerating objects: 7616, done.        
-remote: Counting objects: 100% (7616/7616), done.        
-remote: Compressing objects: 100% (4758/4758), done.        
-remote: Total 7616 (delta 4891), reused 4762 (delta 2739), pack-reused 0 (from 0)        
-Receiving objects: 100% (7616/7616), 248.84 MiB | 20.51 MiB/s, done.
-Resolving deltas: 100% (4891/4891), done.
+remote: Enumerating objects: 7695, done.        
+remote: Counting objects: 100% (7695/7695), done.        
+remote: Compressing objects: 100% (4904/4904), done.        
+remote: Total 7695 (delta 4967), reused 4695 (delta 2672), pack-reused 0 (from 0)        
+Receiving objects: 100% (7695/7695), 248.85 MiB | 31.61 MiB/s, done.
+Resolving deltas: 100% (4967/4967), done.
 HEAD is now at c1ab645 Update HISTORY.md
 -- Performing Test COMPILER_HAS_THOSE_TOGGLES
 -- Performing Test COMPILER_HAS_THOSE_TOGGLES - Success
@@ -40,6 +40,6 @@ HEAD is now at c1ab645 Update HISTORY.md
 -- Compiling with the flags:
 --   PLATFORM=PLATFORM_DESKTOP
 --   GRAPHICS=GRAPHICS_API_OPENGL_33
--- Configuring done (35.1s)
--- Generating done (0.2s)
+-- Configuring done (25.2s)
+-- Generating done (0.1s)
 -- Build files have been written to: C:/Users/Administratör/CLionProjects/DunGen/cmake-build-debug

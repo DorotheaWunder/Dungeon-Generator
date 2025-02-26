@@ -1,5 +1,6 @@
 ﻿#include "LevelTile.h"
 #include "Dungeon.h"
+#include "player.h"
 #include "raylib.h"
 #include <cstdlib>
 #include <ctime>
@@ -156,7 +157,7 @@ TileType Dungeon::DistributeRoomTypes()
                     {TileType::TREASURE, 0.20f},
                     {TileType::TRAP, 0.50f},
                     {TileType::ROOM, 0.40f},
-                    {TileType::BOSS, 0.30f},
+                    {TileType::BOSS, 0.50f},
                 };
             break;
         case 5:
@@ -166,7 +167,7 @@ TileType Dungeon::DistributeRoomTypes()
                     {TileType::TREASURE, 0.20f},
                     {TileType::TRAP, 0.60f},
                     {TileType::ROOM, 0.30f},
-                    {TileType::BOSS, 1.00f},
+                    {TileType::BOSS, 0.90f},
                 };
             break;
         default:
@@ -314,17 +315,16 @@ void Dungeon::ResetAlgorithm()
 }
 
 //------------------------------------------------------ rooms
-Anchor::Anchor(int x, int y) : x(x), y(y) {}
 
 std::pair<int, int> SetAnchorNumber(int difficulty)
 {
     switch (difficulty)
     {
-        case 1: return {2, 5};
-        case 2: return {5, 8};
-        case 3: return {7, 10};
-        case 4: return {10, 13};
-        case 5: return {17, 20};
+        case 1: return {3, 4};
+        case 2: return {5, 7};
+        case 3: return {8, 11};
+        case 4: return {12, 15};
+        case 5: return {16, 20};
     }
 }
 
@@ -418,7 +418,7 @@ void Dungeon::CreateRooms()
     }
 }
 
-//------------------------------------------------------ Complete DUNGEON
+//------------------------------------------------------ Complete Dungeon/ Game
 
 void Dungeon::GenerateDungeon()
 {
@@ -439,4 +439,20 @@ void Dungeon::GenerateDungeon()
     CreateRooms();
 
     difficulty = (difficulty % 5) + 1;
+}
+
+void Dungeon::SpawnPlayer(Player& player)
+{
+    for (int i = 0; i < LEVEL_WIDTH; i++)
+    {
+        for (int j = 0; j < LEVEL_HEIGHT; j++)
+        {
+            if (rooms[i][j].roomType == TileType::ENTRY)
+            {
+                player.posX = i;
+                player.posY = j;
+                return;
+            }
+        }
+    }
 }

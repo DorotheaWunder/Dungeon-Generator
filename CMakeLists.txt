@@ -34,6 +34,8 @@ add_executable(DunGen main.cpp
         LevelTile.cpp
         Dungeon.h
         Dungeon.cpp
+        Player.h
+        Player.cpp
 )
 
 # set the include directory
