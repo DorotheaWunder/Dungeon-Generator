@@ -17,7 +17,7 @@ Color LevelTile::SetTileColor() const
     switch (roomType)
     {
         case TileType::ROOM:
-            return GRAY;
+            return DARKGRAY;
         case TileType::WALL:
             return BLACK;
         case TileType::CORRIDOR:
@@ -27,15 +27,15 @@ Color LevelTile::SetTileColor() const
         case TileType::ANCHOR:
             return GREEN;
         case TileType::COMBAT:
-            return RED;
+            return (Color){ 138, 53, 53, 255 };
         case TileType::TREASURE:
-            return GOLD;
+            return (Color){ 144, 122, 50, 255 };
         case TileType::TRAP:
-            return BROWN;
+            return (Color){ 121, 85, 54, 255 };
         case TileType::ENTRY:
-            return PURPLE;
+            return WHITE;
         case TileType::EXIT:
-            return PURPLE;
+            return WHITE;
         case TileType::NONE:
         default:
             return BLACK;

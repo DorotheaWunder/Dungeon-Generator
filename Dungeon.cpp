@@ -119,10 +119,10 @@ TileType Dungeon::DistributeRoomTypes()
     {
         roomProbabilities =
             {
-                {TileType::COMBAT, 0.40f},
-                {TileType::TREASURE, 0.20f},
-                {TileType::TRAP, 0.30f},
-                {TileType::ROOM, 0.60f},
+                {TileType::COMBAT, 100.00f},
+                {TileType::TREASURE, 0.00f},
+                {TileType::TRAP, 0.00f},
+                {TileType::ROOM, 0.00f},
             };
     }
 
@@ -251,6 +251,7 @@ void Dungeon::StepPrimAlgorithm()
 
 void Dungeon::ResetAlgorithm()
 {
+    anchors.clear();
     InitLevelGrid();
     frontier.clear();
     isGenerating = true;
@@ -260,7 +261,6 @@ void Dungeon::ResetAlgorithm()
     MarkAsVisited(currentX, currentY);
     frontier.push_back({currentX, currentY});
 }
-
 
 //------------------------------------------------------ poisson
 Anchor::Anchor(int x, int y) : x(x), y(y) {}
@@ -324,8 +324,8 @@ void Dungeon::RandomAnchorPoint(int numAnchors, int minDistance, int maxDistance
 
 void Dungeon::CreateOutlineTiles(int anchorX, int anchorY)
 {
-    int roomWidth = 2 + rand() % 4;
-    int roomHeight = 2 + rand() % 4;
+    int roomWidth = 2 + rand() % 3;
+    int roomHeight = 2 + rand() % 3;
 
     int startX = std::max(0, anchorX - roomWidth/ 2);
     int endX = std::min(LEVEL_WIDTH - 1, startX + roomWidth);
@@ -366,7 +366,7 @@ void Dungeon::GenerateDungeon()
         StepPrimAlgorithm();
     }
 
-    const int numAnchors = 10;
+    const int numAnchors = 1;
     const int minDistance = 5;
     const int maxDistance = 30;
 
