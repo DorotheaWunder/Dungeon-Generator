@@ -31,15 +31,9 @@ endif()
 
 add_executable(DunGen main.cpp
         LevelTile.h
-        UI.h
-        UI.cpp
-        Menu.h
-        Menu.cpp
         LevelTile.cpp
         Dungeon.h
         Dungeon.cpp
-        MapRoom.h
-        MapRoom.cpp
 )
 
 # set the include directory

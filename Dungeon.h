@@ -37,6 +37,7 @@ private:
     int currentX, currentY;
     int roomCounter;
     bool isGenerating = false;
+    int difficulty = 1;
 
     std::vector<std::pair<int, int>>GetNeighborTile(int x, int y);
     void MarkAsVisited(int x, int y);

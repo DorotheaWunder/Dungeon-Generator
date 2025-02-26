@@ -20,8 +20,8 @@ Color LevelTile::SetTileColor() const
             return DARKGRAY;
         case TileType::WALL:
             return BLACK;
-        case TileType::CORRIDOR:
-            return DARKGRAY;
+        case TileType::BOSS:
+            return RED;
         case TileType::FRONTIER:
             return SKYBLUE;
         case TileType::ANCHOR:

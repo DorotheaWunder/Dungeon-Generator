@@ -2,13 +2,11 @@
 #include <stdlib.h>
 #include <memory.h>
 #include "raylib.h"
-#include "ui.h"
-#include "menu.h"
 #include "dungeon.h"
 
 int main()
 {
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DunGen");
+    InitWindow(620, 620, "DunGen");
     Dungeon dungeon;
 
     SetTargetFPS(60);

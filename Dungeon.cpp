@@ -95,7 +95,7 @@ Dungeon::GetNeighborTile(int x, int y)
 
 void Dungeon::MarkAsVisited(int x, int y)
 {
-    rooms[x][y].roomType = TileType::CORRIDOR;
+    rooms[x][y].roomType = TileType::ROOM;
 }
 
 std::pair<int, int> Dungeon::GetRandomNeighbor(std::vector<std::pair<int, int>>& neighbors)
@@ -113,17 +113,68 @@ bool Dungeon::IsValidCell(int x, int y) const
 
 TileType Dungeon::DistributeRoomTypes()
 {
-    static std::vector<TileProbability> roomProbabilities;
+    std::vector<TileProbability> roomProbabilities;
 
     if (roomProbabilities.empty())
     {
-        roomProbabilities =
-            {
-                {TileType::COMBAT, 100.00f},
-                {TileType::TREASURE, 0.00f},
-                {TileType::TRAP, 0.00f},
-                {TileType::ROOM, 0.00f},
+        switch (difficulty)
+        {
+        case 1:
+            roomProbabilities =
+                {
+                    {TileType::COMBAT, 0.10f},
+                    {TileType::TREASURE, 0.20f},
+                    {TileType::TRAP, 0.10f},
+                    {TileType::ROOM, 0.60f},
+                    {TileType::BOSS, 0.00f},
+                };
+            break;
+        case 2:
+            roomProbabilities =
+                {
+                    {TileType::COMBAT, 0.30f},
+                    {TileType::TREASURE, 0.20f},
+                    {TileType::TRAP, 0.20f},
+                    {TileType::ROOM, 0.60f},
+                    {TileType::BOSS, 0.00f},
+                };
+            break;
+        case 3:
+            roomProbabilities =
+                {
+                    {TileType::COMBAT, 0.40f},
+                    {TileType::TREASURE, 0.20f},
+                    {TileType::TRAP, 0.300f},
+                    {TileType::ROOM, 0.50f},
+                    {TileType::BOSS, 0.10f},
+                };
+            break;
+        case 4:
+            roomProbabilities =
+                {
+                    {TileType::COMBAT, 0.50f},
+                    {TileType::TREASURE, 0.20f},
+                    {TileType::TRAP, 0.50f},
+                    {TileType::ROOM, 0.40f},
+                    {TileType::BOSS, 0.30f},
+                };
+            break;
+        case 5:
+            roomProbabilities =
+                {
+                    {TileType::COMBAT, 0.60f},
+                    {TileType::TREASURE, 0.20f},
+                    {TileType::TRAP, 0.60f},
+                    {TileType::ROOM, 0.30f},
+                    {TileType::BOSS, 1.00f},
+                };
+            break;
+        default:
+            roomProbabilities = {
+            {TileType::ROOM, 1.0f}
             };
+            break;
+        }
     }
 
     float roll = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
@@ -262,8 +313,20 @@ void Dungeon::ResetAlgorithm()
     frontier.push_back({currentX, currentY});
 }
 
-//------------------------------------------------------ poisson
+//------------------------------------------------------ rooms
 Anchor::Anchor(int x, int y) : x(x), y(y) {}
+
+std::pair<int, int> SetAnchorNumber(int difficulty)
+{
+    switch (difficulty)
+    {
+        case 1: return {2, 5};
+        case 2: return {5, 8};
+        case 3: return {7, 10};
+        case 4: return {10, 13};
+        case 5: return {17, 20};
+    }
+}
 
 int CalculateSquareDistance(const Anchor& a1, const Anchor& a2)
 {
@@ -366,10 +429,14 @@ void Dungeon::GenerateDungeon()
         StepPrimAlgorithm();
     }
 
-    const int numAnchors = 1;
+    auto anchorRange = SetAnchorNumber(difficulty);
+    const int numAnchors = anchorRange.first + (rand() % (anchorRange.second - anchorRange.first + 1));
+
     const int minDistance = 5;
     const int maxDistance = 30;
 
     RandomAnchorPoint(numAnchors, minDistance, maxDistance);
     CreateRooms();
+
+    difficulty = (difficulty % 5) + 1;
 }
